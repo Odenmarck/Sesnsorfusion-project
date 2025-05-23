@@ -1,0 +1,19 @@
+
+
+t = xhat.t;
+gyr = clean_data_from_NAN(meas.gyr);
+acc = clean_data_from_NAN(meas.acc);
+mag = clean_data_from_NAN(meas.mag);
+
+gyr_clean = gyr(1:end-10);
+acc_clean =
+
+var_gyr = zeros(3,1);
+var_acc = zeros(3,1);
+var_mag = zeros(3,1);
+
+for i = 1:3
+    var_gyr(i) = var(gyr(i,:));
+    var_acc(i) = var(acc(i,:));
+    var_mag(i) = var(mag(i,:));
+end
