@@ -35,4 +35,13 @@ function q = rotation_to_quaternion(rotation_mat)
     
 end
 
-q_replica = rotation_to_quaternion(R_W_to_S)
+q_replica = rotation_to_quaternion(R_W_to_S);
+
+%%
+
+%mean(meas.acc(1,:))
+%data = meas.acc(1,:)
+
+%clean_data_from_NAN(meas.acc(1,:))
+       
+

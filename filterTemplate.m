@@ -115,6 +115,9 @@ function [xhat, meas] = filterTemplate(calAcc, calGyr, calMag)
       meas.gyr(:, end+1) = gyr;
       meas.mag(:, end+1) = mag;
       meas.orient(:, end+1) = orientation;
+
+      assignin('base', 'xhat', xhat);
+      assignin('base', 'meas', meas);
     end
   catch e
     fprintf(['Unsuccessful connecting to client!\n' ...
