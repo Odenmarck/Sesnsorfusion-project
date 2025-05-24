@@ -126,5 +126,5 @@ function [xhat, meas] = filterTemplate(calAcc, calGyr, calMag)
   end
 end
 
-%% Save plotted data to file
-save("data",)
+% Save streamed data to file
+% save("data","xhat", "meas");

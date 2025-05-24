@@ -1,3 +1,5 @@
+addpath("our")
+load("data","xhat", "meas");
 
 color_x = [1 0 0];
 color_y = [0 1 0];

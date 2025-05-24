@@ -1,4 +1,5 @@
-
+addpath("our")
+load("data","xhat", "meas");
 
 t = xhat.t;
 gyr = clean_data_from_NAN(meas.gyr);
