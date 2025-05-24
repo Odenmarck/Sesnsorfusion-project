@@ -126,10 +126,5 @@ function [xhat, meas] = filterTemplate(calAcc, calGyr, calMag)
   end
 end
 
-%<<<<<<< HEAD
-% Save streamed data to file
-% save("data","xhat", "meas");
-%=======
 %% Save plotted data to file
 save("data","xhat", "meas")
-%>>>>>>> 9456df6 (plotting update task2)
