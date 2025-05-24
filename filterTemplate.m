@@ -125,3 +125,6 @@ function [xhat, meas] = filterTemplate(calAcc, calGyr, calMag)
              'running this function!']);
   end
 end
+
+%% Save plotted data to file
+save("data",)
