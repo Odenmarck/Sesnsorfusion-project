@@ -1,0 +1,32 @@
+function plot_pdf(expected_val, covariance, data, sensortype)
+    number_of_figures = size(data,1);
+    axis_type = ["x", "y", "z"];
+    N = 100;
+    figure();
+    for i = 1:number_of_figures
+        sigma = sqrt(covariance(i, i));
+        xaxis = linspace(-4*sigma + expected_val(i), expected_val(i) + 4*sigma, N);
+        yaxis = normpdf(xaxis, expected_val(i), sqrt(covariance(i,i)));
+       
+        subplot(1,3,i);
+        histogram(data(i, :), "Normalization", "pdf")
+        hold on
+        plot(xaxis, yaxis, 'LineWidth', 2)
+        hist_label = sprintf("Histogram for %s_%s", sensortype, axis_type(i));
+        pdf_label = sprintf("PDF for %s_%s", sensortype, axis_type(i));
+        legend(hist_label, pdf_label);
+        xlabel("Value");
+        ylabel("PDF");
+        ylim([0; max(yaxis) + 1])
+
+        subplot(2, 3, i);
+        plot(data(i,:));
+        hold on 
+        yline(expected_val(i), LineWidth=1.5, color = [1 0 0])
+        title('Accelerometer readings in x');
+legend("Acc_x", "mean")
+
+
+  
+    end
+end
