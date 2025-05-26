@@ -1,6 +1,6 @@
 addpath("our")
 clear
-load("data1min_z.mat","xhat", "meas");
+load("data_z.mat","xhat", "meas");
 
 color_x = [1 0 0];
 color_y = [0 1 0];

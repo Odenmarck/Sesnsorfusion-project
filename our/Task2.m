@@ -28,36 +28,30 @@ for i = 1:3
     var_mag(i) = var(mag_clean(i,:));
 end
 
-mean_gyr;
-mean_acc;
-mean_mag;
-
-var_gyr;
-var_acc;
-var_mag;
-
-cov_gyr1 = cov(gyr_clean.')
-cov_acc1 = cov(acc_clean.')
-cov_mag1 = cov(mag_clean.')
-
-
-color_x = [1 0 0];
-color_y = [0 1 0];
-color_z = [0 0 1];
-
-t = xhat.t;
-gyr = clean_data_from_NAN(meas.gyr);
-acc = clean_data_from_NAN(meas.acc);
-mag = clean_data_from_NAN(meas.mag);
+cov_gyr = cov(gyr_clean.');
+cov_acc = cov(acc_clean.');
+cov_mag = cov(mag_clean.');
 
 
 
+
+
+nBin = 30;
+
+
+plot_pdf(mean_gyr, cov_gyr, gyr_clean, "Gyro", nBin)
+plot_pdf(mean_acc, cov_acc, acc_clean, "Accelerometer", nBin)
+plot_pdf(mean_mag, cov_mag, mag_clean, "Magnetometer", nBin)
+
+
+%%
 figure(1)
 clf
 
+
 % Gyro
 lim = 3e-3;
-nBin =30;
+nBin = 30;
 
 subplot(3,3,1)
 histogram(gyr_clean(1,:),'BinEdges',linspace(-lim,lim,nBin),'Normalization','probability','FaceColor',color_x)
@@ -73,6 +67,7 @@ subplot(3,3,3)
 histogram(gyr_clean(3,:),'BinEdges',linspace(-lim,lim,nBin),'Normalization','probability','FaceColor',color_z)
 title("Gyro z")
 xlim([-lim,lim])
+
 % Acc
 lim = 6e-2;
 nBin = 30;
