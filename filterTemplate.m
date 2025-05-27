@@ -1,4 +1,5 @@
 function [xhat, meas] = filterTemplate(calAcc, calGyr, calMag)
+addpath("our")
 % FILTERTEMPLATE  Filter template
 %
 % This is a template function for how to collect and filter data
@@ -32,8 +33,13 @@ function [xhat, meas] = filterTemplate(calAcc, calGyr, calMag)
   x = [1; 0; 0 ;0];
   P = eye(nx, nx);
   Rw = [ 0.1110   -0.0721    0.0001;
-   -0.0721    0.0634   -0.0004;
-    0.0001   -0.0004    0.0019] * 1e-4; 
+        -0.0721    0.0634   -0.0004;
+         0.0001   -0.0004    0.0019] * 1e-4;
+
+  Ra = [ 0.0890   -0.0003    0.0030;
+        -0.0003    0.0861    0.0212;
+         0.0030    0.0212    0.2806] * 1e-3;
+
   T = 0.01;
 
   % Saved filter states.
@@ -77,19 +83,26 @@ function [xhat, meas] = filterTemplate(calAcc, calGyr, calMag)
         t0 = t;
       end
 
-      acc = data(1, 2:4)';
-      if ~any(isnan(acc))  % Acc measurements are available.
-        % Do something
-      end
-
+      % Prediction step using gyro data
       gyr = data(1, 5:7)';
       if ~any(isnan(gyr))  % Gyro measurements are available.
         [x, P] = tu_qw(x, P, gyr, T, Rw);
         gyrOld = gyr;
       else
-          gyrOld
-          [x, P] = tu_qw(x, P, gyrOld, T, Rw);
+        [x, P] = tu_qw(x, P, gyrOld, T, Rw);
       end
+
+      % Update step using acc data
+      % oldAcc = zeros(3,1);
+      acc = data(1, 2:4)';
+      if ~any(isnan(acc))  % Acc measurements are available.
+        % [x, P] = mu_g(x, P, acc, T, Ra);
+        % oldAcc = acc;
+      else
+        % [x, P] = mu_g(x, P, oldAcc, T, Ra);
+      end
+
+
 
       mag = data(1, 8:10)';
       if ~any(isnan(mag))  % Mag measurements are available.

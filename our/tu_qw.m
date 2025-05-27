@@ -3,6 +3,7 @@ function [x, P] = tu_qw(x, P, omega, T, Rw)
 % x: quaternion
 % P: covariance matrix
 % omega: Input gyro values
+% T: time step
 % Rw: noise covariance matrix
 F = @(w) T/2 * Somega(w) + eye(4);
 G = @(q) T/2 * Sq(q);
