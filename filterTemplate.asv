@@ -31,10 +31,6 @@ function [xhat, meas] = filterTemplate(calAcc, calGyr, calMag)
   % Current filter state.
   x = [1; 0; 0 ;0];
   P = eye(nx, nx);
-  Rw = [ 0.1110   -0.0721    0.0001;
-   -0.0721    0.0634   -0.0004;
-    0.0001   -0.0004    0.0019] * 1e-4; 
-  T = 0.01;
 
   % Saved filter states.
   xhat = struct('t', zeros(1, 0),...
@@ -83,9 +79,7 @@ function [xhat, meas] = filterTemplate(calAcc, calGyr, calMag)
       end
       gyr = data(1, 5:7)';
       if ~any(isnan(gyr))  % Gyro measurements are available.
-        [x, P] = tu_qw(x, P, gyr, T, Rw);
-      else
-          [x, P] = tu_qw(xhat.x(:, end), P, gyr, T, Rw);
+        [x, P] = tu_qw(xhat.x(:, end), xhat.P(:, :, end), gyr, T, Rw)
       end
 
       mag = data(1, 8:10)';
@@ -137,5 +131,5 @@ end
 % save("data","xhat", "meas");
 %=======
 %% Save plotted data to file
- save("data","xhat", "meas")
+% save("data","xhat", "meas")
 %>>>>>>> 9456df6 (plotting update task2)
