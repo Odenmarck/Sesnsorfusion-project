@@ -81,17 +81,21 @@ function [xhat, meas] = filterTemplate(calAcc, calGyr, calMag)
       if ~any(isnan(acc))  % Acc measurements are available.
         % Do something
       end
+
       gyr = data(1, 5:7)';
       if ~any(isnan(gyr))  % Gyro measurements are available.
         [x, P] = tu_qw(x, P, gyr, T, Rw);
+        gyrOld = gyr;
       else
-          [x, P] = tu_qw(xhat.x(:, end), P, gyr, T, Rw);
+          gyrOld
+          [x, P] = tu_qw(x, P, gyrOld, T, Rw);
       end
 
       mag = data(1, 8:10)';
       if ~any(isnan(mag))  % Mag measurements are available.
         % Do something
       end
+
 
       orientation = data(1, 18:21)';  % Google's orientation estimate.
 
@@ -109,6 +113,7 @@ function [xhat, meas] = filterTemplate(calAcc, calGyr, calMag)
           title(googleView, 'GOOGLE', 'FontSize', 16);
         end
       end
+
       counter = counter + 1;
 
       % Save estimates
@@ -137,5 +142,5 @@ end
 % save("data","xhat", "meas");
 %=======
 %% Save plotted data to file
- save("data","xhat", "meas")
+% save("data","xhat", "meas")
 %>>>>>>> 9456df6 (plotting update task2)
