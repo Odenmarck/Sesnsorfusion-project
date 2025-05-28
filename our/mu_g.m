@@ -1,9 +1,9 @@
 function [x, P] = mu_g(x, P, yacc, T, Rw)
-
+    
     % Input
     % x: predicted quaternion
     % P: prediction covariance matrix
-    % omega: Input gyro values
+    % yacc: Input accelerometer values
     % T: time step
     % Rw: noise covariance matrix
     
@@ -12,19 +12,14 @@ function [x, P] = mu_g(x, P, yacc, T, Rw)
     % P: updated (posterior) covariance matrix
     
     % % Mean of accelerometer data when the phone is laying on a table with the screen up
-    % g1 = 0.0728;
-    % g2 = -0.0770;
-    % g3 = 9.8574;
+  
+    g = [0.0728; -0.0770; 9.8574];
     % 
     % % Force acting on the phone resulting in an acceleration
-    % f1 = 0;
-    % f2 = 0;
-    % f3=  0;
-    % 
-    % x1 = x(1);
-    % x2 = x(2);
-    % x3 = x(3);
-    % x4 = x(4);
+    f = [1; 0; 0] ;
+
+    
+  
     % 
     % 
     % % How to calculate H:
@@ -34,19 +29,22 @@ function [x, P] = mu_g(x, P, yacc, T, Rw)
     % % yacc_syms = Qq(q).'*(g + f);
     % % H = jacobian(yacc_syms, q)
     % 
-    % 
-    % H = [4*x1*(f1 + g1) + 2*x4*(f2 + g2) - 2*x3*(f3 + g3), 4*x2*(f1 + g1) + 2*x3*(f2 + g2) + 2*x4*(f3 + g3),                  2*x2*(f2 + g2) - 2*x1*(f3 + g3),                  2*x1*(f2 + g2) + 2*x2*(f3 + g3);
-    %      4*x1*(f2 + g2) - 2*x4*(f1 + g1) + 2*x2*(f3 + g3),                  2*x3*(f1 + g1) + 2*x1*(f3 + g3), 2*x2*(f1 + g1) + 4*x3*(f2 + g2) + 2*x4*(f3 + g3),                  2*x3*(f3 + g3) - 2*x1*(f1 + g1);
-    %      2*x3*(f1 + g1) - 2*x2*(f2 + g2) + 4*x1*(f3 + g3),                  2*x4*(f1 + g1) - 2*x1*(f2 + g2),                  2*x1*(f1 + g1) + 2*x4*(f2 + g2), 2*x2*(f1 + g1) + 2*x3*(f2 + g2) + 4*x4*(f3 + g3)];
-    % 
-    % 
-    % S = H*P*H.' + Rw;
-    % K = P*H.'/S;
-    % 
-    % yacc_hat = Qq(x).'*(g_0 + fak);
-    % x = x + K*(yacc - yacc_hat);
-    % P = P-K*S*K.';
-    x = x;
-    P = P;
 
-end
+    H = [4*x(1)*(f(1) + g(1)) + 2*x(4)*(f(2) + g(2)) - 2*x(3)*(f(3) + g(3)), 4*x(2)*(f(1) + g(1)) + 2*x(3)*(f(2) + g(2)) + 2*x(4)*(f(3) + g(3)),                  2*x(2)*(f(2) + g(2)) - 2*x(1)*(f(3) + g(3)),                  2*x(1)*(f(2) + g(2)) + 2*x(2)*(f(3) + g(3));
+         4*x(1)*(f(2) + g(2)) - 2*x(4)*(f(1) + g(1)) + 2*x(2)*(f(3) + g(3)),                  2*x(3)*(f(1) + g(1)) + 2*x(1)*(f(3) + g(3)), 2*x(2)*(f(1) + g(1)) + 4*x(3)*(f(2) + g(2)) + 2*x(4)*(f(3) + g(3)),                  2*x(3)*(f(3) + g(3)) - 2*x(1)*(f(1) + g(1));
+         2*x(3)*(f(1) + g(1)) - 2*x(2)*(f(2) + g(2)) + 4*x(1)*(f(3) + g(3)),                  2*x(4)*(f(1) + g(1)) - 2*x(1)*(f(2) + g(2)),                  2*x(1)*(f(1) + g(1)) + 2*x(4)*(f(2) + g(2)), 2*x(2)*(f(1) + g(1)) + 2*x(3)*(f(2) + g(2)) + 4*x(4)*(f(3) + g(3))];
+
+    % 
+
+    Qq_transpose = [2*x(1)^2 + 2*x(2)^2 - 1,   2*x(1)*x(4) + 2*x(2)*x(3),   2*x(2)*x(4) - 2*x(1)*x(3);
+      2*x(2)*x(3) - 2*x(1)*x(4), 2*x(1)^2 + 2*x(3)^2 - 1,   2*x(1)*x(2) + 2*x(3)*x(4);
+      2*x(1)*x(3) + 2*x(2)*x(4),   2*x(3)*x(4) - 2*x(1)*x(2), 2*x(1)^2 + 2*x(4)^2 - 1];
+    S = H*P*H.' + Rw;
+    K = (P*H.')/S;
+    
+    yacc_hat = Qq_transpose*(g + f);
+    x = x + K*(yacc - yacc_hat);
+    P = P-K*S*K.';
+    [x, P] = mu_normalizeQ(x, P);
+    %x = x;
+    %P = P;

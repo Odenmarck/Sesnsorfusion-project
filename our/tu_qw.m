@@ -1,4 +1,5 @@
 function [x, P] = tu_qw(x, P, omega, T, Rw)
+
 % Performs time update step
 % x: quaternion
 % P: covariance matrix

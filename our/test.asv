@@ -177,12 +177,32 @@ plot_pdf(expected_val_acc, cov_acc, clean_acc(2,:), "mag")
 
 plot_pdf(expected_val_acc, cov_acc, clean_acc(3,:), "mag")
 
-
 %%
+syms q0 q1 q2 q3 g0 f real
+q = [q0; q1; q2;q3];
+rot = Qq(q).';
+Q = Qq(q).';
+[Q0, Q1, Q2, Q3] = dQqdq(q);
+f1 = Q(1,:);
+f2 = Q(2,:);
+f3 = Q(3,:);
+jacobian(f1, q).';
+jacobian(f2, q);
+jacobian(f3, q);
+yacc = Qq(q).'*(g0 + f);
+
+%res = [jacobian(yacc(1,:), q0); jacobian(yacc(2,:),q1), ...
+%    jacobian(yacc(3,:))]
+jacobian(yacc(1,:), q).'
 
 
-syms q [4 1]
-Qq(q).'
+
+
+
+
+
+
+
 
 
 
