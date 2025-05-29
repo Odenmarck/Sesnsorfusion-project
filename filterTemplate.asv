@@ -145,11 +145,11 @@ try
            
         magLength = norm(mag);
         if ~isnan(magLength)
-            magExpected = (1-magAlphaUnreliable)*magExpected + magAlphaUnreliable*mag;
+            magExpected = (1-magAlpha)*magAlphaUnreliable + magAlphaUnreliable*mag;
         end
         
         if abs(magLength - norm(magExpected)) < magTol
-            magExpected = (1-magAlphaReliable)*magExpected + magAlphaReliable*mag;
+            magExpected = (1-magAlpha)*magAlphaReliable + magAlphaReliable*mag;
             magReliable = mag;
         else
             magReliable = [NaN; NaN; NaN];
@@ -199,7 +199,7 @@ try
 catch e
     fprintf(['Unsuccessful connecting to client!\n' ...
         'Make sure to start streaming from the phone *after*'...
-        'running this function!\n\n']);
+        'running this function!\n']);
     fprintf(e.message);
 end
 end
