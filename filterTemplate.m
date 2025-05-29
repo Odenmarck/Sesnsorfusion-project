@@ -39,6 +39,19 @@ Rw = [ 0.1110   -0.0721    0.0001;
 Ra = [ 0.0890   -0.0003    0.0030;
     -0.0003    0.0861    0.0212;
     0.0030    0.0212    0.2806] * 1e-3;
+Rm =    [ 4.5917   -2.5708  -13.7295;
+       -2.5708    1.6312    7.8674;
+         -13.7295    7.8674   41.9239];
+
+mx = 13.2156;
+my = -7.5914;
+mz = -40.2631;
+
+m0 = [0; sqrt(mx^2 + my^2); mz];
+
+bias_acc = [0; 0; 9.82] - [0.0841; 0.01167; 9.6923]; % bias = exp - exp_hat
+bias_gyr = [0; 0; 0] - [0.7070; 0.4956; 0.3697]*1e-5;
+bias_mag = zeros(3,1);
 
 T = 0.01;
 
@@ -88,7 +101,7 @@ try
         % Prediction step using gyro data
         gyr = data(1, 5:7)';
         if ~any(isnan(gyr))  % Gyro measurements are available.
-            [x, P] = tu_qw(x, P, gyr, T, Rw);
+            [x, P] = tu_qw(x, P, gyr-bias_gyr, T, Rw);
             gyrOld = gyr;
         else
             [x, P] = tu_qw(x, P, gyrOld, T, Rw);
@@ -111,18 +124,15 @@ try
 
         % Acc measurement update
         if ~any(isnan(accReliable)) % Acc measurements are available.
-            [x, P] = mu_g(x, P, accReliable, T, Ra);
+            [x, P] = mu_g(x, P, accReliable-bias_acc, T, Ra);
             setAccDist(ownView,false);
         else
             setAccDist(ownView,true);
         end
 
-
-
-
         mag = data(1, 8:10)';
         if ~any(isnan(mag))  % Mag measurements are available.
-            % Do something
+            [x, P] = mu_m(x, P, mag, m0, Rm);
         end
 
         orientation = data(1, 18:21)';  % Google's orientation estimate.
