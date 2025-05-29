@@ -32,13 +32,13 @@ mean_gyr
 mean_acc
 mean_mag
 
-var_gyr
-var_acc
-var_mag
+% var_gyr
+% var_acc
+% var_mag
 
-cov_gyr = cov(gyr_clean.')
-cov_acc = cov(acc_clean.')
-cov_mag = cov(mag_clean.')
+cov_gyr = cov(gyr_clean.');
+cov_acc = cov(acc_clean.');
+cov_mag = cov(mag_clean.');
 
 
 
@@ -60,6 +60,6 @@ nBin = 60;
 % plot(fftAccX)
 % figure(4)
 % plot(acc_clean(1,:)-mean_acc(1))
-
-y = highpass(acc_clean(3,:),10,100);
-plot(y)
+% 
+% y = highpass(acc_clean(3,:),10,100);
+% plot(y)
