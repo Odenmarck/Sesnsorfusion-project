@@ -54,10 +54,7 @@ bias_gyr = [0; 0; 0] - [0.7070; 0.4956; 0.3697]*1e-5;
 bias_mag = zeros(3,1);
 
 T = 0.01;
-accTol = 0.2;       % Accelerometer outlier detection tuning
-magTol = 10;        % Magnetometer outlier detection tuning
-magAlpha = 0.01;    % Magnetometer outlier detection tuning
-magExpected = [2.0534; -17.7476; -21.0806];    % magExpected_0
+
 
 % Saved filter states.
 xhat = struct('t', zeros(1, 0),...
@@ -69,7 +66,7 @@ meas = struct('t', zeros(1, 0),...
     'gyr', zeros(3, 0),...
     'mag', zeros(3, 0),...
     'orient', zeros(4, 0));
-try
+% try
     %% Create data link
     server = StreamSensorDataReader(3400);
     % Makes sure to resources are returned.
@@ -83,6 +80,12 @@ try
     ownView = OrientationView('Own filter', gca);  % Used for visualization.
     googleView = [];
     counter = 0;  % Used to throttle the displayed frame rate.
+
+    accTol = 0.5;       % Accelerometer outlier detection tuning
+    gyrOld = zeros(3,1);
+    magTol = 50;        % Magnetometer outlier detection tuning
+    magAlpha = 0.01;    % Magnetometer outlier detection tuning
+    magExpected = [2.0534; -17.7476; -21.0806];    % magExpected_0
 
     %% Filter loop
     while server.status()  % Repeat while data is available
@@ -117,10 +120,9 @@ try
         acc = data(1, 2:4)';
 
         % Outlier acc measurements are removed
-        accLength = abs( sqrt(acc(1)^2 + acc(2)^2 + acc(3)^2));
+        accLength = norm(acc);
         accExpected = 9.82;
-        tol = 0.2;
-        if accLength - accExpected < tol
+        if abs(accLength - accExpected) < accTol
             accReliable = acc;
         else
             accReliable = [NaN; NaN; NaN];
@@ -134,16 +136,23 @@ try
             setAccDist(ownView,true);
         end
 
+
+
+
         mag = data(1, 8:10)';
         % Outlier acc measurements are removed
-       
-        magLength = abs( sqrt(mag(1)^2 + mag(2)^2 + mag(3)^2));
-        magExpected = (1-alpha)*magExpected + alpha*magLength;
-        if magLength - magExpected < magTol
+           
+        magLength = norm(mag);
+        if ~isnan(magLength)
+            magExpected = (1-magAlpha)*magExpected + magAlpha*mag;
+        end
+        
+        if abs(magLength - norm(magExpected)) < magTol
             magReliable = mag;
         else
             magReliable = [NaN; NaN; NaN];
         end
+
 
         if ~any(isnan(magReliable))  % Mag measurements are available.
             [x, P] = mu_m(x, P, magReliable, m0, Rm);
@@ -185,11 +194,11 @@ try
         assignin('base', 'xhat', xhat);
         assignin('base', 'meas', meas);
     end
-catch e
-    fprintf(['Unsuccessful connecting to client!\n' ...
-        'Make sure to start streaming from the phone *after*'...
-        'running this function!']);
-end
+% catch e
+%     fprintf(['Unsuccessful connecting to client!\n' ...
+%         'Make sure to start streaming from the phone *after*'...
+%         'running this function!']);
+% end
 end
 
 %<<<<<<< HEAD
