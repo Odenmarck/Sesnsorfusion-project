@@ -54,6 +54,10 @@ bias_gyr = [0; 0; 0] - [0.7070; 0.4956; 0.3697]*1e-5;
 bias_mag = zeros(3,1);
 
 T = 0.01;
+accTol = 0.2;       % Accelerometer outlier detection tuning
+magTol = 10;        % Magnetometer outlier detection tuning
+magAlpha = 0.01;    % Magnetometer outlier detection tuning
+magExpected = [2.0534; -17.7476; -21.0806];    % magExpected_0
 
 % Saved filter states.
 xhat = struct('t', zeros(1, 0),...
@@ -131,8 +135,17 @@ try
         end
 
         mag = data(1, 8:10)';
-        if ~any(isnan(mag))  % Mag measurements are available.
-            [x, P] = mu_m(x, P, mag, m0, Rm);
+        % Outlier acc measurements are removed
+       
+        magLength = abs( sqrt(mag(1)^2 + mag(2)^2 + mag(3)^2));
+        magExpected = (1-alpha)*magExpected + alpha*magLength;
+        if magLength - magExpected < magTol
+            magReliable = mag;
+        else
+            magReliable = [NaN; NaN; NaN];
+        end
+        if ~any(isnan(magReliable))  % Mag measurements are available.
+            [x, P] = mu_m(x, P, magReliable, m0, Rm);
         end
 
         orientation = data(1, 18:21)';  % Google's orientation estimate.
