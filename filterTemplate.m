@@ -144,8 +144,12 @@ try
         else
             magReliable = [NaN; NaN; NaN];
         end
+
         if ~any(isnan(magReliable))  % Mag measurements are available.
             [x, P] = mu_m(x, P, magReliable, m0, Rm);
+            setMagDist(ownView,false);
+        else
+            setMagDist(ownView,true);
         end
 
         orientation = data(1, 18:21)';  % Google's orientation estimate.
