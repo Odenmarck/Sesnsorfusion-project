@@ -83,7 +83,7 @@ try
 
     accTol = 0.5;       % Accelerometer outlier detection tuning
     gyrOld = zeros(3,1);
-    magTol = 50;                % Magnetometer outlier detection tuning
+    magTol = 20;                % Magnetometer outlier detection tuning
     magAlphaReliable = 0.1;     % Magnetometer outlier detection tuning
     magAlphaUnreliable = 0.01;  % Magnetometer outlier detection tuning
     magExpected = [2.0534; -17.7476; -21.0806];    % magExpected_0
@@ -152,7 +152,7 @@ try
             magExpected = (1-magAlphaReliable)*magExpected + magAlphaReliable*mag;
             magReliable = mag;
         else
-            magReliable = [NaN; NaN; NaN];
+            magReliable = [NaN; NaN NaN];
         end
 
 
@@ -167,6 +167,7 @@ try
 
         % Visualize result
         if rem(counter, 10) == 0
+        % if counter == 5
             setOrientation(ownView, x(1:4));
             title(ownView, 'OWN', 'FontSize', 16);
             if ~any(isnan(orientation))
@@ -200,7 +201,7 @@ catch e
     fprintf(['Unsuccessful connecting to client!\n' ...
         'Make sure to start streaming from the phone *after*'...
         'running this function!\n\n']);
-    fprintf(e.message);
+    fprintf(2, e.message);      % prints raised error message in red
 end
 end
 
